@@ -72,6 +72,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Common IntelliJ Platform excludes
+/.idea
 
 # User specific
 **/.idea/**/workspace.xml
