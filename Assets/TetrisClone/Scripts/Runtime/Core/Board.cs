@@ -12,19 +12,26 @@ namespace TetrisClone.Runtime.Core
         [SerializeField] private GameObject cellPrefab;
     
         [Header("Settings")]
+        [SerializeField] private int boardHeaderHeight = 4;
         [SerializeField] private int boardHeight = 20;
         [SerializeField] private int boardWidth = 10;
 
-        private GameObject[] _cells;
+        private Transform[,] _cells;
 
         private void OnValidate()
         {
-            if (IsBoardDrawn || cellPrefab == null) return;
+            if (IsBoardDrawn) return;
             DrawBoard();
         }
         
         public void DrawBoard()
         {
+            if (cellPrefab == null)
+            {
+                Debug.LogError("Cell prefab is null!");
+                return;
+            }
+            
             RemoveExistingCells();
             CreateNewCells();
             RepositionCamera();
@@ -37,21 +44,21 @@ namespace TetrisClone.Runtime.Core
         {
             if (_cells?.Length > 0)
             {
-                foreach (GameObject cell in _cells) { DestroyImmediate(cell); }
+                foreach (Transform cell in _cells) { DestroyImmediate(cell.gameObject); }
             }
         }
         
         private void CreateNewCells()
         {
-            _cells = new GameObject[boardHeight * boardWidth];
+            _cells = new Transform[boardHeight+boardHeaderHeight,boardWidth];
 
             for (int i = 0; i < boardHeight; i++)
             {
                 for (int j = 0; j < boardWidth; j++)
                 {
-                    GameObject cell = Instantiate(cellPrefab, transform);
-                    _cells[(i * boardWidth) + j] = cell;
-                    cell.transform.localPosition = new Vector3(j, i, 0);
+                    Transform cell = Instantiate(cellPrefab, transform).transform;
+                    _cells[i,j] = cell.transform;
+                    cell.localPosition = new Vector3(j, i, 0);
                 }
             }
         }
